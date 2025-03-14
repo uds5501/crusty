@@ -7,8 +7,8 @@ pub struct Lexer {
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
     // Identifiers and literals
+    NIDENT,
     IDENT,
-    EOF,
 
     // bounds
     LPAREN,
@@ -39,7 +39,7 @@ pub struct Token {
 }
 
 impl Lexer {
-    pub fn new(input: String) -> Self{
+    pub fn new(input: String) -> Self {
         let sz = input.len();
         Lexer {
             input,
@@ -53,7 +53,7 @@ impl Lexer {
             None
         } else {
             let ch = self.input.chars().nth(self.position);
-            self.position+=1;
+            self.position += 1;
             ch
         }
     }
@@ -90,23 +90,63 @@ impl Lexer {
     }
 }
 
+fn literal_mapper(literal: &str) -> Token {
+    // check if all are digits
+    if literal.chars().all(char::is_numeric) {
+        return Token {
+            token_type: TokenType::NIDENT,
+            literal: literal.to_string(),
+        };
+    }
+    Token {
+        token_type: TokenType::IDENT,
+        literal: literal.to_string(),
+    }
+}
 fn identifier_mapper(ident: &str) -> Token {
     match ident {
-        "return" => Token { token_type: TokenType::RETURN, literal: ident.to_string() },
-        "int" => Token { token_type: TokenType::INT, literal: ident.to_string() },
-        _ => Token { token_type: TokenType::IDENT, literal: ident.to_string() },
+        "return" => Token {
+            token_type: TokenType::RETURN,
+            literal: ident.to_string(),
+        },
+        "int" => Token {
+            token_type: TokenType::INT,
+            literal: ident.to_string(),
+        },
+        _ => literal_mapper(ident),
     }
 }
 
 fn special_mapper(ch: &char) -> Option<Token> {
     match ch {
-        '(' => Some(Token { token_type: TokenType::LPAREN, literal: ch.to_string() }),
-        ')' => Some(Token { token_type: TokenType::RPAREN, literal: ch.to_string() }),
-        '{' => Some(Token { token_type: TokenType::LBRACE, literal: ch.to_string() }),
-        '}' => Some(Token { token_type: TokenType::RBRACE, literal: ch.to_string() }),
-        ',' => Some(Token { token_type: TokenType::COMMA, literal: ch.to_string() }),
-        ';' => Some(Token { token_type: TokenType::SEMICOLON, literal: ch.to_string() }),
-        '=' => Some(Token { token_type: TokenType::EQ, literal: ch.to_string() }),
+        '(' => Some(Token {
+            token_type: TokenType::LPAREN,
+            literal: ch.to_string(),
+        }),
+        ')' => Some(Token {
+            token_type: TokenType::RPAREN,
+            literal: ch.to_string(),
+        }),
+        '{' => Some(Token {
+            token_type: TokenType::LBRACE,
+            literal: ch.to_string(),
+        }),
+        '}' => Some(Token {
+            token_type: TokenType::RBRACE,
+            literal: ch.to_string(),
+        }),
+        ',' => Some(Token {
+            token_type: TokenType::COMMA,
+            literal: ch.to_string(),
+        }),
+        ';' => Some(Token {
+            token_type: TokenType::SEMICOLON,
+            literal: ch.to_string(),
+        }),
+        '=' => Some(Token {
+            token_type: TokenType::EQ,
+            literal: ch.to_string(),
+        }),
         _ => None,
     }
 }
@@ -115,7 +155,15 @@ fn should_break_running_token(ch: &char, curr: &mut String) -> bool {
     if curr.is_empty() {
         return false;
     }
-    if ch.is_whitespace() || ch == &',' || ch == &'(' || ch == &')' || ch == &'{' || ch == &'}' || ch == &';' || ch == &'=' {
+    if ch.is_whitespace()
+        || ch == &','
+        || ch == &'('
+        || ch == &')'
+        || ch == &'{'
+        || ch == &'}'
+        || ch == &';'
+        || ch == &'='
+    {
         return true;
     }
     false

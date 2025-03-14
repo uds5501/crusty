@@ -36,8 +36,8 @@ fn test_integer_literals() {
     let mut lexer = Lexer::new(input.to_string());
     let tokens = lexer.lex();
     let expected_tokens = vec![
-        Token { token_type: TokenType::IDENT, literal: "123".to_string() },
-        Token { token_type: TokenType::IDENT, literal: "456".to_string() },
+        Token { token_type: TokenType::NIDENT, literal: "123".to_string() },
+        Token { token_type: TokenType::NIDENT, literal: "456".to_string() },
     ];
     assert_eq!(tokens, expected_tokens);
 }
@@ -54,7 +54,7 @@ fn test_full_program() {
         Token { token_type: TokenType::RPAREN, literal: ")".to_string() },
         Token { token_type: TokenType::LBRACE, literal: "{".to_string() },
         Token { token_type: TokenType::RETURN, literal: "return".to_string() },
-        Token { token_type: TokenType::IDENT, literal: "2".to_string() },
+        Token { token_type: TokenType::NIDENT, literal: "2".to_string() },
         Token { token_type: TokenType::SEMICOLON, literal: ";".to_string() },
         Token { token_type: TokenType::RBRACE, literal: "}".to_string() },
     ];
