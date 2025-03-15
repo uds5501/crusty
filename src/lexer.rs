@@ -71,15 +71,18 @@ impl Lexer {
                 let token = identifier_mapper(&current_token);
                 tokens.push(token);
                 current_token = String::new();
+            } else {
+                current_token.push(ch);
+                continue;
             }
+
             if ch.is_whitespace() {
                 continue;
             }
-            let token = special_mapper(&ch);
-            if let Some(t) = token {
+
+            let special_token = special_mapper(&ch);
+            if let Some(t) = special_token {
                 tokens.push(t);
-            } else {
-                current_token.push(ch);
             }
         }
         if !current_token.is_empty() {
