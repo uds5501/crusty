@@ -4,7 +4,7 @@ pub struct Lexer {
     total: usize,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
     // Identifiers and literals
     NIDENT,
@@ -32,7 +32,7 @@ pub enum TokenType {
     RETURN,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,
@@ -72,7 +72,16 @@ impl Lexer {
                 tokens.push(token);
                 current_token = String::new();
             } else {
-                current_token.push(ch);
+                if ch.is_whitespace() {
+                    continue;
+                }
+
+                let special_token = special_mapper(&ch);
+                if let Some(t) = special_token {
+                    tokens.push(t);
+                } else {
+                    current_token.push(ch);
+                }
                 continue;
             }
 
